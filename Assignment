@@ -1,0 +1,39 @@
+ReplicaSet
+1>What are the differences file-wise?
+a->kind and name are different
+b->rc has a containerPort
+c->rs has matchLabels
+
+2>[root@ip-172-31-29-54 05-services]# kubectl apply -f kubia-replicaset.yaml
+replicaset.apps/kubia created
+
+3>Identify what commands can be run after "kubectl apply...."
+kubectl get po -o wide
+kubectl get svc -n <namespace>
+
+Make a service over these pods (kubia-replicaset) and see if the service picks up the web-service within the pod ("You have hit....." message)
+[root@ip-172-31-25-53 05-services]# kubectl apply -f kubia-svc.yaml
+service/kubia2 created
+[root@ip-172-31-25-53 05-services]# curl 10.99.10.99:80
+You've hit kubia-hw9nh
+
+Negative Testing : change the labels of the pod and see if the service is still applied on those pods
+[root@ip-172-31-25-53 05-services]#  kubectl label pod kubia-8qvxn  test=testing
+pod/kubia-8qvxn labeled
+the services remained intact
+
+
+CRON JOB
+1>
+[root@ip-172-31-25-53 04-controllers]# kubectl apply -f cronjob.yaml
+cronjob.batch/batch-job-every-fifteen-minutes created
+
+4> kubectl get cronjobs - gets the running jobs
+NAME                              SCHEDULE             SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+batch-job-every-fifteen-minutes   0,15,30,45 * * * *   False     0        <none>          72s
+[root@ip-172-31-25-53 04-controllers]# kubectl describe cronjob
+Name:                          batch-job-every-fifteen-minutes
+6>kubectl delete cronjob
+
+7>Cron jobs are scheduled to periodically run in the background for a certain interval, they do the same thing
+job is triggered by us when we want, also Jobs can do different task assigned
